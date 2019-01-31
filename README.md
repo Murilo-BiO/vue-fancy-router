@@ -14,10 +14,14 @@ File `router.js`
 ```javascript
 var Router = require('vue-fancy-router');
 
-var viewsPath = './views'; // Optional, allows you to use components without importing them
-var options = { mode: 'history' }; // Optional
+// Optional, allows you to use components without importing them
+var viewsHandler = (component) => {
+	return require(`./views/${component}`).default;
+}; 
+// Optional
+var options = { mode: 'history' }; 
 
-var Route = new Router(options, viewsPath);
+var Route = new Router(options, viewsHandler);
 
 Route.add('/', 'WrapperComponent').children(() => {
 	Route.add('', 'HomeComponent', 'home');
@@ -28,7 +32,7 @@ Route.add('/', 'WrapperComponent').children(() => {
 	});
 });
 
-exports.router = Route.boot();
+exports.router = Route.build();
 ```
 
 File `main.js`
@@ -41,7 +45,7 @@ var router = require('./router');
 Vue.use(VueRouter);
 
 var app = new Vue({
-	router: router
+	router: new VueRouter(router)
 });
 ```
 

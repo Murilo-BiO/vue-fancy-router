@@ -1,5 +1,4 @@
-import VueRouter, { RouteConfig, RouterOptions, Route, NavigationGuard } from 'vue-router';
-import vRouter = require('vue-router');
+import { RouteConfig, RouterOptions, Route, NavigationGuard } from 'vue-router';
 import { AsyncComponent, ComponentOptions } from 'vue/types/options';
 import Vue from 'vue';
 import {
@@ -12,6 +11,7 @@ import {
 
 export type NextGuardFunction<V extends Vue = Vue> = (to?: RawLocation | false | ((vm: V) => any) | void) => void;
 export type ScopedRoute = (r?: Router) => {};
+type ViewHandler = (component: string) => {};
 export type GuardContext = {
 	to?: Route,
 	from?: Route,
@@ -28,21 +28,32 @@ export class Router {
 	private parent?: RouteConfig;
 	private isGrouped: boolean = false;
 	private groupPath: string = '';
+	private options?: RouterOptions;
+	private viewHandler?: ViewHandler;
 	
-	constructor(private options?: RouterOptions, private viewsPath?: string) {
+	constructor();
+	constructor(options?: RouterOptions);
+	constructor(viewHandler?: ViewHandler);
+	constructor(options?: RouterOptions | ViewHandler, viewHandler?: ViewHandler) {
+		if (options == undefined && viewHandler == undefined)
+			return;
+		if (viewHandler !== undefined)
+			this.viewHandler = viewHandler;
+		if (typeof options === 'function')
+			this.viewHandler = options;
+		else
+			this.options = options;
 	}
 
-	public boot() : VueRouter {
-		const vrouter : any = vRouter;
-		if (this.options) {
-			if (this.options.routes)
-				this.options.routes.concat(this.routes);
-			else
-				this.options.routes = this.routes;
-		} else {
-			this.options = { routes: this.routes };
-		}
-		return new vrouter(this.options);
+	public build() : RouterOptions {
+		if (!this.options)
+			return { routes: this.routes };
+
+		if (this.options.routes)
+			this.options.routes.concat(this.routes);
+		else
+			this.options.routes = this.routes;
+		return this.options;
 	}
 
 	public add(path: string, component?: Component | string, name?: string) : Router {
@@ -89,14 +100,17 @@ export class Router {
 		return this;
 	}
 
-	public redirect(redirect: RedirectOption) : Router {
-		if (!this.currentRoute)
-			throw new Error('Router.components: You must add a route before defining its redirect options.');
-
-		if (typeof this.currentRoute.redirect === 'object' && typeof redirect === 'object')
-			this.currentRoute.redirect = { ...this.currentRoute.redirect, ...redirect };
+	public redirect(path: string, redirect: RedirectOption) : Router {
+		let route: RouteConfig = {
+			path: this.formatPath(path),
+			redirect
+		};
+		
+		if (this.parent && this.parent.children)
+			this.parent.children.push(route);
 		else
-			this.currentRoute.redirect = redirect;
+			this.routes.push(route);
+
 		return this;
 	}
 
@@ -262,8 +276,11 @@ export class Router {
 	}
 
 	private ensureComponent(component: Component | string) : Component {
-		if (typeof component !== 'string')
-			return component;
-		return require(`${this.viewsPath}/${component}`);
+		if (typeof component === 'string') {
+			if (this.viewHandler === undefined)
+				throw new Error('Router: You must specify a view handler that returns a component if you want to pass components as strings.');
+			return this.viewHandler(component);
+		}
+		return component;
 	}
 }
