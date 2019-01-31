@@ -1,0 +1,31 @@
+{
+  "name": "vue-fancy-router",
+  "version": "1.0.0",
+  "description": "Vue Router Encapsulation for faster development. Based on Laravel's Router",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "mocha --reporter spec"
+  },
+  "author": "Murilo Pereti <murilopereti@gmail.com>",
+  "license": "MIT",
+  "repository": {
+	  "type": "git",
+	  "url": "git+https://github.com/Murilo-BiO/vue-fancy-router.git"
+  },
+  "bugs": {
+	  "url": "https://github.com/Murilo-BiO/vue-fancy-router/issues"
+  },
+  "homepage": "https://github.com/Murilo-BiO/vue-fancy-router#readme",
+  "dependencies": {
+    "@types/node": "^10.12.19",
+    "vue": "^2.5.22",
+    "vue-router": "^3.0.2"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
+    "typescript": "^3.2.4"
+  }
+}
