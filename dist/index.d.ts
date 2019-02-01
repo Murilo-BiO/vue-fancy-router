@@ -1,9 +1,10 @@
-import VueRouter, { RouteConfig, RouterOptions, Route } from 'vue-router';
+import { RouteConfig, RouterOptions, Route } from 'vue-router';
 import { AsyncComponent, ComponentOptions } from 'vue/types/options';
 import Vue from 'vue';
 import { Dictionary, RedirectOption, RoutePropsFunction, PathToRegexpOptions, RawLocation } from 'vue-router/types/router';
 export declare type NextGuardFunction<V extends Vue = Vue> = (to?: RawLocation | false | ((vm: V) => any) | void) => void;
 export declare type ScopedRoute = (r?: Router) => {};
+declare type ViewHandler = (component: string) => {};
 export declare type GuardContext = {
     to?: Route;
     from?: Route;
@@ -12,8 +13,6 @@ export declare type GuardContext = {
 export declare type Guard = (ctx: GuardContext) => void;
 export declare type Component = ComponentOptions<Vue> | typeof Vue | AsyncComponent;
 export declare class Router {
-    private options?;
-    private viewsPath?;
     private routes;
     private groupGuards;
     private currentRoute?;
@@ -21,11 +20,15 @@ export declare class Router {
     private parent?;
     private isGrouped;
     private groupPath;
-    constructor(options?: RouterOptions | undefined, viewsPath?: string | undefined);
-    boot(): VueRouter;
+    private options?;
+    private viewHandler?;
+    constructor();
+    constructor(options?: RouterOptions);
+    constructor(viewHandler?: ViewHandler);
+    build(): RouterOptions;
     add(path: string, component?: Component | string, name?: string): Router;
     components(components: Dictionary<Component> | string[]): Router;
-    redirect(redirect: RedirectOption): Router;
+    redirect(path: string, redirect: RedirectOption): Router;
     alias(alias: string | string[]): Router;
     children(subRoutesScope: ScopedRoute): Router;
     meta(meta: any): Router;
@@ -42,3 +45,4 @@ export declare class Router {
     private formatPath;
     private ensureComponent;
 }
+export {};

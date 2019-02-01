@@ -11,29 +11,30 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var vRouter = require("vue-router");
 var Router = /** @class */ (function () {
-    function Router(options, viewsPath) {
-        this.options = options;
-        this.viewsPath = viewsPath;
+    function Router(options, viewHandler) {
         this.routes = [];
         this.groupGuards = [];
         this.currentGuards = [];
         this.isGrouped = false;
         this.groupPath = '';
+        if (options == undefined && viewHandler == undefined)
+            return;
+        if (viewHandler !== undefined)
+            this.viewHandler = viewHandler;
+        if (typeof options === 'function')
+            this.viewHandler = options;
+        else
+            this.options = options;
     }
-    Router.prototype.boot = function () {
-        var vrouter = vRouter;
-        if (this.options) {
-            if (this.options.routes)
-                this.options.routes.concat(this.routes);
-            else
-                this.options.routes = this.routes;
-        }
-        else {
-            this.options = { routes: this.routes };
-        }
-        return new vrouter(this.options);
+    Router.prototype.build = function () {
+        if (!this.options)
+            return { routes: this.routes };
+        if (this.options.routes)
+            this.options.routes.concat(this.routes);
+        else
+            this.options.routes = this.routes;
+        return this.options;
     };
     Router.prototype.add = function (path, component, name) {
         var route = { path: this.formatPath(path) };
@@ -70,13 +71,15 @@ var Router = /** @class */ (function () {
         }
         return this;
     };
-    Router.prototype.redirect = function (redirect) {
-        if (!this.currentRoute)
-            throw new Error('Router.components: You must add a route before defining its redirect options.');
-        if (typeof this.currentRoute.redirect === 'object' && typeof redirect === 'object')
-            this.currentRoute.redirect = __assign({}, this.currentRoute.redirect, redirect);
+    Router.prototype.redirect = function (path, redirect) {
+        var route = {
+            path: this.formatPath(path),
+            redirect: redirect
+        };
+        if (this.parent && this.parent.children)
+            this.parent.children.push(route);
         else
-            this.currentRoute.redirect = redirect;
+            this.routes.push(route);
         return this;
     };
     Router.prototype.alias = function (alias) {
@@ -204,9 +207,12 @@ var Router = /** @class */ (function () {
         return path.replace(/\/$/, '');
     };
     Router.prototype.ensureComponent = function (component) {
-        if (typeof component !== 'string')
-            return component;
-        return require(this.viewsPath + "/" + component);
+        if (typeof component === 'string') {
+            if (this.viewHandler === undefined)
+                throw new Error('Router: You must specify a view handler that returns a component if you want to pass components as strings.');
+            return this.viewHandler(component);
+        }
+        return component;
     };
     return Router;
 }());

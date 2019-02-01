@@ -4,7 +4,6 @@ var expect = require('chai').expect;
 var index = require('../dist/index');
 
 var Vue = require('vue');
-var VueRouter = require('vue-router');
 
 var TestComponent = Vue.component('button-counter', {
 	data: function () {
@@ -21,9 +20,9 @@ describe('Router Test', () => {
 		router.add('/button', TestComponent, 'button');
 		expect(router.currentRoute.name).to.equal('button');
 	});
-	it('should be instance of VueRouter', () => {
+	it('should be instance of Array', () => {
 		var router = new index.Router;
 		router.add('/', TestComponent);
-		expect((router.boot()) instanceof VueRouter).to.equal(true);
+		expect((router.build()) instanceof Array).to.equal(true);
 	});
 });
