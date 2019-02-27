@@ -34,6 +34,7 @@ export class Router {
 	constructor();
 	constructor(options?: RouterOptions);
 	constructor(viewHandler?: ViewHandler);
+	constructor(options: RouterOptions, viewHandler?: ViewHandler);
 	constructor(options?: RouterOptions | ViewHandler, viewHandler?: ViewHandler) {
 		if (options == undefined && viewHandler == undefined)
 			return;
@@ -62,7 +63,7 @@ export class Router {
 		this.currentGuards = [];
 		if (this.groupGuards.length > 0) {
 			for (let guards of this.groupGuards)
-				this.currentGuards.concat(guards);
+				this.currentGuards = this.currentGuards.concat(guards);
 		}
 		route.beforeEnter = Router.parseGuards(this.currentGuards);
 

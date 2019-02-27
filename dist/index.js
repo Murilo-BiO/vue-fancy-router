@@ -42,7 +42,7 @@ var Router = /** @class */ (function () {
         if (this.groupGuards.length > 0) {
             for (var _i = 0, _a = this.groupGuards; _i < _a.length; _i++) {
                 var guards = _a[_i];
-                this.currentGuards.concat(guards);
+                this.currentGuards = this.currentGuards.concat(guards);
             }
         }
         route.beforeEnter = Router.parseGuards(this.currentGuards);

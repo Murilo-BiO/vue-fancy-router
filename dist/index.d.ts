@@ -25,6 +25,7 @@ export declare class Router {
     constructor();
     constructor(options?: RouterOptions);
     constructor(viewHandler?: ViewHandler);
+    constructor(options: RouterOptions, viewHandler?: ViewHandler);
     build(): RouterOptions;
     add(path: string, component?: Component | string, name?: string): Router;
     components(components: Dictionary<Component> | string[]): Router;
