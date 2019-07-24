@@ -1,6 +1,6 @@
 {
   "name": "vue-fancy-router",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Vue Router Encapsulation for faster development. Based on Laravel's Router",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

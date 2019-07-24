@@ -31,7 +31,7 @@ var Router = /** @class */ (function () {
         if (!this.options)
             return { routes: this.routes };
         if (this.options.routes)
-            this.options.routes.concat(this.routes);
+            this.options.routes = this.options.routes.concat(this.routes);
         else
             this.options.routes = this.routes;
         return this.options;
@@ -87,7 +87,7 @@ var Router = /** @class */ (function () {
             throw new Error('Router.components: You must add a route before defining its alias.');
         if (alias instanceof Array) {
             if (this.currentRoute.alias instanceof Array)
-                this.currentRoute.alias.concat(alias);
+                this.currentRoute.alias = this.currentRoute.alias.concat(alias);
             else
                 this.currentRoute.alias = alias;
         }
@@ -122,7 +122,7 @@ var Router = /** @class */ (function () {
         if (!this.currentRoute)
             throw new Error('Router.guard: You must add a route before using this method.');
         if (guards instanceof Array)
-            this.currentGuards.concat(guards);
+            this.currentGuards = this.currentGuards.concat(guards);
         else
             this.currentGuards.push(guards);
         this.currentRoute.beforeEnter = Router.parseGuards(this.currentGuards);
@@ -174,7 +174,7 @@ var Router = /** @class */ (function () {
         if (this.currentRoute.name)
             options.name = this.currentRoute.name;
         if (this.currentRoute.children && options.children && options.children.length > 0)
-            options.children.concat(this.currentRoute.children);
+            options.children = options.children.concat(this.currentRoute.children);
         options.path = this.currentRoute.path;
         options.component = this.currentRoute.component;
         this.currentRoute = __assign({}, this.currentRoute, options);
