@@ -51,7 +51,7 @@ export class Router {
 			return { routes: this.routes };
 
 		if (this.options.routes)
-			this.options.routes.concat(this.routes);
+			this.options.routes = [...this.options.routes, ...this.routes];
 		else
 			this.options.routes = this.routes;
 		return this.options;
@@ -63,7 +63,7 @@ export class Router {
 		this.currentGuards = [];
 		if (this.groupGuards.length > 0) {
 			for (let guards of this.groupGuards)
-				this.currentGuards = this.currentGuards.concat(guards);
+				this.currentGuards = [...this.currentGuards, ...guards];
 		}
 		route.beforeEnter = Router.parseGuards(this.currentGuards);
 
@@ -121,7 +121,7 @@ export class Router {
 
 		if (alias instanceof Array) {
 			if (this.currentRoute.alias instanceof Array)
-				this.currentRoute.alias.concat(alias);
+				this.currentRoute.alias = [...this.currentRoute.alias, ...alias];
 			else
 				this.currentRoute.alias = alias;
 		} else {
@@ -167,7 +167,7 @@ export class Router {
 			throw new Error('Router.guard: You must add a route before using this method.');
 		
 		if (guards instanceof Array)
-			this.currentGuards.concat(guards);
+			this.currentGuards = [...this.currentGuards, ...guards];
 		else
 			this.currentGuards.push(guards);
 
@@ -232,7 +232,7 @@ export class Router {
 			options.name = this.currentRoute.name;
 		
 		if (this.currentRoute.children && options.children && options.children.length > 0)
-			options.children.concat(this.currentRoute.children);
+			options.children = [...options.children, ...this.currentRoute.children];
 		
 		options.path = this.currentRoute.path;
 		options.component = this.currentRoute.component;

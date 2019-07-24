@@ -23,6 +23,6 @@ describe('Router Test', () => {
 	it('should be instance of Array', () => {
 		var router = new index.Router;
 		router.add('/', TestComponent);
-		expect((router.build()) instanceof Array).to.equal(true);
+		expect((router.build().routes) instanceof Array).to.equal(true);
 	});
 });
